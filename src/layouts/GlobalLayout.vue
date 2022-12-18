@@ -1,25 +1,27 @@
 <template>
   <div class="theme-container">
-    <SideBar :isHidden="state.isSideBarHidden"/>
+    <SideBar :isHidden="store.isSideBarHidden" />
     <main class="main">
-      <AppBar :isHidden="isAppBarHidden"/>
-      <transition appear name="fade" mode="out-in">
-        <component :is="layout" class="container" :key="$route.path"></component>
+      <AppBar :isHidden="isAppBarHidden" />
+      <transition appear mode="out-in" name="fade">
+        <div :key="$route.path" class="container">
+          <DefaultGlobalLayout />
+        </div>
       </transition>
       <component :is="footerBar" class="footer"></component>
     </main>
 
-    <BackToTop :isHidden="isBackToTopHidden"/>
+    <BackToTop :isHidden="isBackToTopHidden" />
   </div>
 </template>
 
 <script>
 import throttle from 'lodash/throttle';
-import state from '@eugeo/store/';
 import AppBar from '../components/appbar/AppBar';
-import SideBar from '../components/SideBar/SideBar';
+import SideBar from '../components/side-bar/SideBar';
 import BackToTop from '../components/BackToTop';
 import FooterBar from '../components/FooterBar';
+import DefaultGlobalLayout from '@app/components/GlobalLayout';
 
 export default {
   name: 'GlobalLayout',
@@ -27,10 +29,10 @@ export default {
     AppBar,
     SideBar,
     BackToTop,
-    FooterBar
+    FooterBar,
+    DefaultGlobalLayout
   },
   data: () => ({
-    state,
     scrollTop: 0,
     isAppBarHidden: false,
     isBackToTopHidden: true,
@@ -52,9 +54,7 @@ export default {
     },
 
     footerBar() {
-      return (
-        this.$frontmatter.footer || this.$themeConfig.footer || 'FooterBar'
-      );
+      return this.$frontmatter.footer || this.$themeConfig.footer || 'FooterBar';
     }
   },
   mounted() {
@@ -62,18 +62,17 @@ export default {
   },
   watch: {
     $route() {
-      state.isSideBarHidden = true;
+      this.store.isSideBarHidden = true;
     },
     scrollTop(newVal, oldVal) {
       const isOverstep = newVal >= this.threshold;
       this.isBackToTopHidden = !isOverstep;
-      this.isAppBarHidden =
-        newVal > oldVal && isOverstep && state.isSideBarHidden;
+      this.isAppBarHidden = newVal > oldVal && isOverstep && this.store.isSideBarHidden;
     }
   },
   methods: {
     closeSideBar() {
-      state.isSideBarHidden = true;
+      this.store.isSideBarHidden = true;
     },
     handleScroll() {
       this.scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -100,6 +99,11 @@ export default {
       flex: 1;
       margin: spacer(3) auto;
       width: 100%;
+
+      & > * {
+        margin-right: auto;
+        margin-left: auto;
+      }
     }
 
     .footer {

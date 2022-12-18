@@ -4,13 +4,13 @@
       <h2 class="headline">TAGS</h2>
       <ul class="tag-list">
         <router-link
-          tag="li"
-          :count="map.posts.length"
+          :count="map.pages.length"
+          :key="name"
           :to="map.path"
           class="tag-item"
-          v-for="(map, name) of $tags._metaMap"
-          :key="name"
-        >{{name}}</router-link>
+          tag="li"
+          v-for="(map, name) of $tag._metaMap"
+        >{{ name }}</router-link>
       </ul>
     </section>
   </div>

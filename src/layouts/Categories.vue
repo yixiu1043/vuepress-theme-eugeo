@@ -3,9 +3,15 @@
     <section class="categories">
       <h2 class="headline">CATEGORIES</h2>
       <ul class="cate-list">
-        <router-link tag="li" :to="map.path" class="cate-item" v-for="(map, name) of $categories._metaMap" :key="name">
+        <router-link
+          :key="name"
+          :to="map.path"
+          class="cate-item"
+          tag="li"
+          v-for="(map, name) of $category._metaMap"
+        >
           <span class="name">{{ name }}</span>
-          <span class="count">{{ map.posts.length }}</span>
+          <span class="count">{{ map.pages.length }}</span>
         </router-link>
       </ul>
     </section>

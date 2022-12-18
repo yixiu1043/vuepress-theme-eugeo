@@ -13,6 +13,57 @@ const addStyleResource = rule => {
 module.exports = (opts, ctx) => {
   const { comments = false, maxSuggestions = 5, perPage = 6 } = opts;
 
+  const defaultBlogPluginOptions = {
+    directories: [
+      {
+        id: 'post',
+        dirname: '_posts',
+        path: '/',
+        layout: 'Home',
+        itemLayout: 'Post'
+      }
+    ],
+    frontmatters: [
+      {
+        id: 'tag',
+        keys: ['tag', 'tags'],
+        path: '/tag/',
+        layout: 'Tags',
+        scopeLayout: 'Tag',
+        frontmatter: { title: 'Tag' }
+      },
+      {
+        id: 'category',
+        keys: ['category', 'categories'],
+        path: '/category/',
+        layout: 'Categories',
+        scopeLayout: 'Category',
+        frontmatter: { title: 'Category' }
+      }
+    ],
+    globalPagination: {
+      layout: 'Home'
+    }
+  };
+
+  const extraPages = [
+    {
+      title: 'Home',
+      permalink: '/',
+      frontmatter: {
+        title: 'Home',
+        layout: 'Home'
+      }
+    },
+    {
+      permalink: '/archive/',
+      frontmatter: {
+        title: `Archive`,
+        layout: 'Archive'
+      }
+    }
+  ];
+
   return {
     name: 'vuepress-theme-eugeo',
 
@@ -38,18 +89,11 @@ module.exports = (opts, ctx) => {
       '@vuepress/medium-zoom',
       '@vuepress/last-updated',
       '@vuepress/active-header-links',
+      ['@vuepress/blog', defaultBlogPluginOptions],
       ['@vssue/vssue', comments],
-      ['@vuepress/container', { type: 'tip' }],
+      [('@vuepress/container', { type: 'tip' })],
       ['@vuepress/container', { type: 'warning' }],
-      ['@vuepress/container', { type: 'danger' }],
-      ['@vuepress/google-analytics', { ga: 'UA-145088955-1' }],
-      ['@vuepress/pwa', {
-        serviceWorker: true, updatePopup: {
-          message: '内容有更新！',
-          buttonText: '点击刷新'
-        }
-      }],
-      [require('./plugins/eugeo-blog-plugin')]
+      ['@vuepress/container', { type: 'danger' }]
     ],
 
     extendMarkdown: md => {
@@ -65,6 +109,10 @@ module.exports = (opts, ctx) => {
       types.forEach(type => addStyleResource(config.module.rule('stylus').oneOf(type)));
       config.resolve.alias.set('@eugeo', __dirname);
       return config;
+    },
+
+    async ready() {
+      await Promise.all(extraPages.map(page => ctx.addPage(page)));
     }
   };
 };

@@ -3,7 +3,7 @@
     <p>
       &copy;2019
       <span class="heart">♥</span>
-      Yixiu
+      Coolyang
     </p>
     <p>
       Powered by
